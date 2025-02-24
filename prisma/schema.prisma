@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(uuid())
+  name      String
+  email     String     @unique
+  password  String?
+  role      Role @default(USER)
+  donations  Animal[] @relation("Donations")
+  adoptions  Animal[] @relation("Adoptions")
+  customer   Sale[]   @relation("Customer")
+
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime?  @map("updated_at")
+  @@map("users")
+}
+
+enum Role {
+  USER
+  ADMIN
+  CUSTOMER
+  ADOPTER
+  DONOR
+}
+
+model Species {
+  id    String  @id @default(uuid())
+  name  String  @unique
+  breeds Breed[]
+  @@map("species")
+}
+
+model Breed {
+  id        String   @id @default(uuid())
+  name      String
+  speciesId String
+  species   Species  @relation(fields: [speciesId], references: [id])
+  animal   Animal[]
+  @@map("breeds")
+}
+
+
+model Animal {
+  id          String  @id @default(uuid())
+  name        String
+  breedId    String
+  breed    Breed  @relation(fields: [breedId], references: [id])
+  age         Int
+  adopted     Boolean @default(false)
+  donorId     String
+  donor   User? @relation("Donations", fields: [donorId], references: [id])
+  adopterId   String?
+  adopter User? @relation("Adoptions", fields: [adopterId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  sale   Sale[] 
+}
+model Sale {
+  id         String   @id @default(uuid())
+  animalId    String
+  animal    Animal @relation(fields: [animalId], references: [id])
+  price      Float
+  customerId String
+   customer   User @relation("Customer",fields: [customerId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+
+// model Product {
+//   id          String   @id @default(uuid())
+//   name        String
+//   description String
+//   price       Float
+//   category    String
+//   createdAt   DateTime @default(now())
+//   updatedAt   DateTime @updatedAt
+// }
+
