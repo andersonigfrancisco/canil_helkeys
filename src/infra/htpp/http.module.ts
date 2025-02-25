@@ -4,6 +4,7 @@ import { AuthenticateController } from './controllers/auth/auth.controller'
 import { ProfileController } from './controllers/account/profile.controller'
 import { DatabaseModule } from '../database/prisma/database.module'
 import { UserService } from '../nest-use-case/neste-create-user-use-case'
+import { ListAccountController } from './controllers/account/list.account.controller'
 //import { NestUserUseCase } from '../nest-use-case/neste-create-user-use-case'
 
 @Module({
@@ -12,6 +13,7 @@ import { UserService } from '../nest-use-case/neste-create-user-use-case'
     CreateAccountController,
     AuthenticateController,
     ProfileController,
+    ListAccountController
   ],
   providers: [UserService],
 })

@@ -30,9 +30,27 @@ export class PrismaUsersRepository implements UserRepository {
     return  PrismaUserMapper.toDomain(data)
   }
   async findMany(params: PaginationParams): Promise<User[]> {
-    const data =  await this.prismaService.user.findMany()
-    return data.map(PrismaUserMapper.toDomain)
+    const page = Number(params.page) || 1;
+    const limit = Number(params.limit) || 10;
+  
+    const [data, total] = await Promise.all([
+      this.prismaService.user.findMany({
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      this.prismaService.user.count(),
+    ]);
+    return data.map(PrismaUserMapper.toDomain);
+  
+    // return {
+    //   users: data.map(PrismaUserMapper.toDomain),
+    //   total,
+    //   page,
+    //   totalPages: Math.ceil(total / limit),
+    // };
   }
+  
+  
   async save(user: User): Promise<void> {
     const data = PrismaUserMapper.toPersisten(user)
     await this.prismaService.user.update({where: {id: user.id.toValues()}, data})

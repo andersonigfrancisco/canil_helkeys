@@ -5,6 +5,7 @@ import { EditUserUseCase } from '@/domain/users/application/use-case/edite-user'
 import { DeleteUserUseCase } from '@/domain/users/application/use-case/delete-delete'
 import { GetByIdUserUseCase } from '@/domain/users/application/use-case/get-user-by-id'
 import { GetByEmailUserUseCase } from '@/domain/users/application/use-case/get-user-by-email'
+import { FetchUserUseCase } from '@/domain/users/application/use-case/fetch-user'
 
 
 @Injectable()
@@ -14,6 +15,7 @@ export class UserService {
   public readonly deleteUserUseCase: DeleteUserUseCase
   public readonly getByIdUserUseCase: GetByIdUserUseCase
   public readonly getByEmailUserUseCase: GetByEmailUserUseCase
+  public readonly fetchUserUseCase:FetchUserUseCase
 
   
 
@@ -23,6 +25,7 @@ export class UserService {
     this.deleteUserUseCase = new DeleteUserUseCase(userRepository)
     this.getByIdUserUseCase = new GetByIdUserUseCase(userRepository)
     this.getByEmailUserUseCase = new GetByEmailUserUseCase(userRepository)
+    this.fetchUserUseCase = new FetchUserUseCase(userRepository)
   }
 }
 
