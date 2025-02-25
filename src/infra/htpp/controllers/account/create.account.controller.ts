@@ -3,23 +3,28 @@ import { z } from 'zod'
 import { ZodValidationPipe } from '@/infra/htpp/pipes/zod-validation-pipe'
 import { UserService } from '@/infra/nest-use-case/neste-create-user-use-case'
 import { PasswordHasher } from '@/cors/password-hasher'
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { createAccountSchema, CreateAccountDto } from './dtos/create-account.dto'
 
-const createAccountBodySchema = z.object({
-  name: z.string(),
-  email: z.string().email(),
-  password: z.string(),
-  role:z.string(),
-})
 
-type CreateAccountBodySchema = z.infer<typeof createAccountBodySchema>
-
+@ApiTags('Accounts')
 @Controller('/accounts')
-@UsePipes(new ZodValidationPipe(createAccountBodySchema))
+@UsePipes(new ZodValidationPipe(createAccountSchema))
 export class CreateAccountController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  async handle(@Body() body: CreateAccountBodySchema): Promise<unknown> {
+  @ApiOperation({ summary: 'Create a new user account' })
+  @ApiResponse({ 
+    status: 201, 
+    description: 'The user account has been successfully created',
+    type: CreateAccountDto 
+  })
+  @ApiResponse({ 
+    status: 409, 
+    description: 'User already exists' 
+  })
+  async handle(@Body() body: CreateAccountDto): Promise<unknown> {
     const { name, email, password,role } = body
 
     const hashPassword = await PasswordHasher.hashPassword(password);

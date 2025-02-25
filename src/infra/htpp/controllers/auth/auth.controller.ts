@@ -7,19 +7,13 @@ import {
 } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { ZodValidationPipe } from '@/infra/htpp/pipes/zod-validation-pipe'
-import { z } from 'zod'
 import { UserService } from '@/infra/nest-use-case/neste-create-user-use-case'
 import { PasswordHasher } from '@/cors/password-hasher'
-
-const authenticateBodySchema = z.object({
-  email: z.string().email(),
-  password: z.string(),
-})
-
-type AuthenticateBodySchema = z.infer<typeof authenticateBodySchema>
+import { ApiOperation, ApiResponse } from '@nestjs/swagger'
+import { AuthDto,authSchema } from './dtos/auth-dto'
 
 @Controller('/session')
-@UsePipes(new ZodValidationPipe(authenticateBodySchema))
+@UsePipes(new ZodValidationPipe(authSchema))
 export class AuthenticateController {
   constructor(
     private readonly userService: UserService,
@@ -27,7 +21,17 @@ export class AuthenticateController {
   ) {}
 
   @Post()
-  async handle(@Body() body: AuthenticateBodySchema) {
+  @ApiOperation({ summary: 'Authenticate user account' })
+  @ApiResponse({ 
+    status: 201, 
+    description: 'The user authenticate has been successfully created',
+    type: AuthDto 
+  })
+  @ApiResponse({ 
+    status: 401, 
+    description: 'Invalid credentials' 
+  })
+  async handle(@Body() body: AuthDto): Promise<unknown>  {
 
     const { email, password } = body
 
