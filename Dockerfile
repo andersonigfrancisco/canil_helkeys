@@ -27,7 +27,7 @@ COPY --from=builder /home/node/app/node_modules ./node_modules
 COPY --from=builder /home/node/app/package*.json ./  
 COPY --from=builder /home/node/app/prisma ./prisma
 
-COPY .env .env  
+#COPY .env .env  
 
 RUN chown -R node:node /home/node/app && chmod -R 755 /home/node/app
 
