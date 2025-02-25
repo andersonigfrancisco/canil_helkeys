@@ -29,6 +29,7 @@ describe('user get profile (E2E)', () => {
         name: 'userteste',
         email: 'userteste@gmail.com',
         password: 'testesenha',
+        role:'ADMIN'
       },
     })
 

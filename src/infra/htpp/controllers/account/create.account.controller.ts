@@ -1,13 +1,14 @@
 import { Body, Controller, Post, UsePipes } from '@nestjs/common'
 import { z } from 'zod'
 import { ZodValidationPipe } from '@/infra/htpp/pipes/zod-validation-pipe'
-import { NestUserUseCase } from '@/infra/nest-use-case/neste-create-user-use-case'
-import { hash } from 'bcryptjs'
+import { UserService } from '@/infra/nest-use-case/neste-create-user-use-case'
+import { PasswordHasher } from '@/cors/password-hasher'
 
 const createAccountBodySchema = z.object({
   name: z.string(),
   email: z.string().email(),
   password: z.string(),
+  role:z.string(),
 })
 
 type CreateAccountBodySchema = z.infer<typeof createAccountBodySchema>
@@ -15,20 +16,22 @@ type CreateAccountBodySchema = z.infer<typeof createAccountBodySchema>
 @Controller('/accounts')
 @UsePipes(new ZodValidationPipe(createAccountBodySchema))
 export class CreateAccountController {
-  constructor(private nestUserUseCase: NestUserUseCase) {}
+  constructor(private readonly userService: UserService) {}
 
   @Post()
   async handle(@Body() body: CreateAccountBodySchema): Promise<unknown> {
-    const { name, email, password } = body
+    const { name, email, password,role } = body
 
-    const hashPassword = await hash(password, 8)
+    const hashPassword = await PasswordHasher.hashPassword(password);
 
-    const data = await this.nestUserUseCase.execute({
-      UserEmail: email,
-      UserName: name,
-      UserPassword: hashPassword,
+    const data = await this.userService.userUseCase.execute({
+      email,
+      name,
+      password: hashPassword,
+      role
     })
-
-    return data.user
+    
+    const { password: _, ...user } = data.value!.user
+    return user
   }
 }

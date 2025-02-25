@@ -8,12 +8,16 @@ export class User extends Entity<CreateUserDTO> {
     return this.props.name
   }
 
+  get email() {
+    return this.props.email
+  }
+
   get password() {
     return this.props.password
   }
 
-  get email() {
-    return this.props.email
+  get role() {
+    return this.props.role
   }
 
   get createdAt() {
@@ -43,15 +47,31 @@ export class User extends Entity<CreateUserDTO> {
     this.touch()
   }
 
+  set role(role: string) {
+    this.props.role = role
+    this.touch()
+  }
+
   static create(
     props: Optional<CreateUserDTO, 'createdAt'>,
     id?: UniqueEntityId,
   ) {
     const user = new User(
-      { ...props, createdAt: props.createdAt ?? new Date() },
+      { ...props, createdAt: props.createdAt ?? new Date(),role: props.role ?? 'USER'},
       id,
     )
 
     return user
   }
+
+  static update(user: User, updates: Partial<CreateUserDTO>): User {
+    Object.entries(updates).forEach(([key, value]) => {
+      if (value !== undefined) {
+        (user.props as any)[key] = value
+      }
+    })
+    user.touch()
+    return user
+  }
+  
 }

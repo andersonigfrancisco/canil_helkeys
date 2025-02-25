@@ -7,8 +7,9 @@ Content-Type: application/json
 
 {
 	"name": "Anderson Francisco",
-	"email": "andersonfranciscoigfh@gmail.com",
-	"password": "testesenha"
+	"email": "andersonfrancisco@gmail.com",
+	"password": "francisco123",
+	"role":"ADMIN"
 }
 
 ###
@@ -18,8 +19,8 @@ POST {{baseUrl}}/session
 Content-Type: application/json
 
 {
-	"email": "andersonfranciscoigf@gmail.com",
-	"password": "testesenha"
+	"email": "andersonfrancisco@gmail.com",
+	"password": "francisco123"
 }
 
 ###

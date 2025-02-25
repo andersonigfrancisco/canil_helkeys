@@ -69,19 +69,19 @@ model Sale {
   animal    Animal @relation(fields: [animalId], references: [id])
   price      Float
   customerId String
-   customer   User @relation("Customer",fields: [customerId], references: [id])
+  customer   User @relation("Customer",fields: [customerId], references: [id])
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
 
 
-// model Product {
-//   id          String   @id @default(uuid())
-//   name        String
-//   description String
-//   price       Float
-//   category    String
-//   createdAt   DateTime @default(now())
-//   updatedAt   DateTime @updatedAt
-// }
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  price       Float
+  category    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
 
